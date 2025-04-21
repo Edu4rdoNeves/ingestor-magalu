@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # Porta de conexão das apps
+      - "15672:15672"   # Porta do dashboard (RabbitMQ UI)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+ 
+  redis:
+    image: redis:7
+    container_name: ingestor-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "redis-root-password"]
+
+
+  postgres:
+    image: postgres:14
+    container_name: ingestor-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ingestor
+      POSTGRES_USER: ingestor_user
+      POSTGRES_PASSWORD: ingestor-root-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ingestor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=ingestor
+    container_name: ingestor-app
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
+    environment:
+      # RabbitMQ
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+
+      # Redis
+      - ADDR=redis:6379
+      - PASSWORD=redis-root-password
+      - REDIS_DB=0
+      - REDIS_MAX_RETRY=3
+      - REDIS_TIME_TO_SLEEP=100
+
+      # Database
+      - INGESTER_HOST=postgres
+      - INGESTER_PORT=5432
+      - INGESTER_USER=ingestor_user
+      - INGESTER_PASSWORD=ingestor-root-password
+      - INGESTER_DB_NAME=ingestor
+
+      # Worker
+      - PULSE_WORKERS_NUMBER=1
+      - PULSE_MESSAGE_BUFFER=1000
+
+      # Cron Schedule
+      - SCHEDULE_SAVE_PULSE=*/1 * * * *
+
+    ports:
+      - "8080:8080" # Se sua app tiver uma porta HTTP/API, ajuste conforme necessário
+
+volumes:
+  postgres_data:
