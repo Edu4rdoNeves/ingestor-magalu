@@ -43,6 +43,6 @@ go.work
 go.work.sum
 
 # Coverage
-ftmcoverage.html
+fmtcoverage.html
 cover.html
 cover.out
