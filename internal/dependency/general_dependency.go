@@ -44,7 +44,7 @@ func LoadGeneral() {
 	}, *pulseQueue)
 
 	pulsePublisher := rabbitmq.NewPublish(rabbitmq.PublishQueue{
-		Exchange:  "", // ou um exchange se for usar
+		Exchange:  "",
 		Key:       pulseConsumer.QueueName,
 		Mandatory: false,
 		Immediate: false,

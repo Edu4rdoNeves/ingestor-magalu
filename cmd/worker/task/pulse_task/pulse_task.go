@@ -51,18 +51,21 @@ func (t *PulseTask) Run(ctx context.Context) {
 		}(i)
 	}
 
-	err := t.RabbitMq.Consumer(
-		func(body []byte) {
-			logrus.Infof("Message received: %s", string(body))
-			messages <- body
-		},
-	)
-	if err != nil {
-		logrus.Errorf("Pulse Task - Failed to consume message: %v", err)
-		close(messages)
-		wg.Wait()
-		return
-	}
+	go func() {
+		err := t.RabbitMq.Consumer(
+			func(body []byte) {
+				select {
+				case <-ctx.Done():
+					return
+				case messages <- body:
+					logrus.Infof("Message received: %s", string(body))
+				}
+			},
+		)
+		if err != nil {
+			logrus.Errorf("Pulse Task - Failed to consume message: %v", err)
+		}
+	}()
 
 	<-ctx.Done()
 
@@ -85,7 +88,7 @@ func (t *PulseTask) process(ctx context.Context, id int, messages <-chan []byte)
 				return
 			}
 
-			var pulseData *dto.PulseData
+			var pulseData dto.PulseData
 			if err := json.Unmarshal(msg, &pulseData); err != nil {
 				logger.Errorf("JSON unmarshal error: %v", err)
 				continue

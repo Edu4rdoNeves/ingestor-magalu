@@ -108,7 +108,7 @@ func LoadEnv() {
 	IngesterDb.Port, err = utils.StringToInt64(os.Getenv("INGESTER_PORT"))
 	if err != nil {
 		IngesterDb.Port = 5432
-		logrus.Errorf("Fail to convert Ingester DB to int. Erro:", err)
+		logrus.Error("Fail to convert Ingester DB to int. Erro:", err)
 	}
 
 	//CRON
