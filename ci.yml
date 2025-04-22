@@ -1,32 +1,101 @@
-name: CI
+name: CI Pipeline 🚀
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:  
 
 jobs:
-  test-and-build:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+      - name: Run golangci-lint
+        run: golangci-lint run ./...
+        
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run tests
+        run: go test ./... -v
+
+  build:
+    name: Build Binary
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout do código
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: 🧰 Setup Go
-        uses: actions/setup-go@v5
+      - name: Setup Go
+        uses: actions/setup-go@v4
         with:
-          go-version: '1.23' 
+          go-version: '1.21'
 
-      - name: 📦 Instalar dependências
-        run: go mod tidy
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-      - name: 🧪 Rodar testes com cobertura
-        run: |
-          make test
-          make coverage
+      - name: Build
+        run: go build -o bin/app ./cmd
 
-      - name: 🏗️ Build da aplicação
-        run: |
-          make build || go build -o bin/app main.go
+  deploy:
+    name: Deploy to Railway
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy with Railway CLI
+        uses: railwayapp/cli-action@v1
+        with:
+          railwayToken: ${{ secrets.RAILWAY_TOKEN }}
