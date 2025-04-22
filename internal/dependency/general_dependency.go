@@ -65,7 +65,7 @@ func LoadGeneral() {
 	})
 
 	//REPOSITORY
-	pulseRepository := pulseRepo.NewPulseRepository(IngesterDb)
+	pulseRepository := pulseRepo.NewPulseRepository(IngestorDb)
 
 	//USECASES
 	pulseUsecase := pulseUsecase.NewPulseUseCase(pulseRepository)

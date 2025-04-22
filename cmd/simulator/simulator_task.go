@@ -7,6 +7,7 @@ import (
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/application/service/rabbitmq"
 	"github.com/Edu4rdoNeves/ingestor-magalu/domain/dto"
+	"github.com/Edu4rdoNeves/ingestor-magalu/internal/configs/env"
 	"github.com/sirupsen/logrus"
 )
 
@@ -27,16 +28,15 @@ func NewSimulatorTask(rabbitmq rabbitmq.IRabbitMQ) ISimulatorTask {
 func (s *SimulatorTask) Run() {
 	logrus.Info("Pulse Task - Started")
 
-	const (
-		totalMessages = 100000
-		numWorkers    = 10
-		bufferSize    = 1000
+	var (
+		totalMessages = env.SimulatorTotalMessages
+		numWorkers    = env.SimulatorWorkersNumber
+		bufferSize    = env.SimulatorBufferSize
 	)
 
 	var wg sync.WaitGroup
 	msgChan := make(chan dto.PulseData, bufferSize)
 
-	// Start worker goroutines
 	for i := 1; i <= numWorkers; i++ {
 		wg.Add(1)
 		go func(workerID int) {
@@ -50,7 +50,6 @@ func (s *SimulatorTask) Run() {
 		}(i)
 	}
 
-	// Geração de mensagens
 	for i := 0; i < totalMessages; i++ {
 		msg := dto.PulseData{
 			Tenant:     "magalu",

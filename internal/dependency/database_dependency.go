@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	IngesterDb *gorm.DB
+	IngestorDb *gorm.DB
 )
 
 func LoadDataBases() {
@@ -16,7 +16,7 @@ func LoadDataBases() {
 
 	var err error
 
-	IngesterDb, err = database.ConnectPostgre(env.IngesterDb)
+	IngestorDb, err = database.ConnectPostgre(env.IngestorDb)
 	if err != nil {
 		logrus.Panic(err)
 	}

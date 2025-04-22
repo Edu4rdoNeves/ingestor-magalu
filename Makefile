@@ -12,9 +12,13 @@ build:
 	@go build
 	@echo "Build completed successfully."
 
-run:
+run-worker:
 	@echo "Running application..."
-	@go run main.go
+	@go run main.go -worker
+
+run-script::
+	@echo "Running application..."
+	@go run main.go -script
 
 test:
 	@echo "Running project tests..."

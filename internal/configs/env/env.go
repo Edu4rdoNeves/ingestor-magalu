@@ -33,12 +33,16 @@ var (
 	SavePulseMessageBuffer int
 	SavePulseBatch         int
 
+	SimulatorTotalMessages int
+	SimulatorWorkersNumber int
+	SimulatorBufferSize    int
+
 	ScheduleSavePulse string
 )
 
 // DATABASE
 var (
-	IngesterDb database.DbConfig
+	IngestorDb database.DbConfig
 )
 
 // OTHERS
@@ -101,14 +105,14 @@ func LoadEnv() {
 	}
 
 	//DATABASE
-	IngesterDb.Host = os.Getenv("INGESTER_HOST")
-	IngesterDb.User = os.Getenv("INGESTER_USER")
-	IngesterDb.Password = os.Getenv("INGESTER_PASSWORD")
-	IngesterDb.DbName = os.Getenv("INGESTER_DB_NAME")
-	IngesterDb.Port, err = utils.StringToInt64(os.Getenv("INGESTER_PORT"))
+	IngestorDb.Host = os.Getenv("INGESTOR_HOST")
+	IngestorDb.User = os.Getenv("INGESTOR_USER")
+	IngestorDb.Password = os.Getenv("INGESTOR_PASSWORD")
+	IngestorDb.DbName = os.Getenv("INGESTOR_DB_NAME")
+	IngestorDb.Port, err = utils.StringToInt64(os.Getenv("INGESTOR_PORT"))
 	if err != nil {
-		IngesterDb.Port = 5432
-		logrus.Error("Fail to convert Ingester DB to int. Erro:", err)
+		IngestorDb.Port = 5432
+		logrus.Error("Fail to convert Ingestor DB to int. Erro:", err)
 	}
 
 	//CRON
@@ -116,4 +120,20 @@ func LoadEnv() {
 
 	//OTHERS
 	Flag = os.Getenv("FLAG")
+
+	SimulatorTotalMessages, err = utils.StringToInt(os.Getenv("SIMULATOR_TOTAL_MESSAGES"))
+	if err != nil {
+		logrus.Error("Fail to convert SimulatorTotalMessages to int. Erro:", err)
+	}
+
+	SimulatorWorkersNumber, err = utils.StringToInt(os.Getenv("SIMULATOR_WORKERS_NUMBER"))
+	if err != nil {
+		logrus.Error("Fail to convert SimulatorWorkersNumber to int. Erro:", err)
+	}
+
+	SimulatorBufferSize, err = utils.StringToInt(os.Getenv("SIMULATOR_BUFFER_SIZE"))
+	if err != nil {
+		logrus.Error("Fail to convert SimulatorBufferSize to int. Erro:", err)
+	}
+
 }

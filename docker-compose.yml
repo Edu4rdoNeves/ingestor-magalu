@@ -54,11 +54,11 @@ services:
       - REDIS_TIME_TO_SLEEP=100
 
       # Database
-      - INGESTER_HOST=postgres
-      - INGESTER_PORT=5432
-      - INGESTER_USER=ingestor_user
-      - INGESTER_PASSWORD=ingestor-root-password
-      - INGESTER_DB_NAME=ingestor
+      - INGESTOR_HOST=postgres
+      - INGESTOR_PORT=5432
+      - INGESTOR_USER=ingestor_user
+      - INGESTOR_PASSWORD=ingestor-root-password
+      - INGESTOR_DB_NAME=ingestor
 
       # Worker
       - PULSE_WORKERS_NUMBER=1
