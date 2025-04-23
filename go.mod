@@ -2,6 +2,7 @@ module github.com/Edu4rdoNeves/ingestor-magalu
 
 go 1.23.0
 
+toolchain go1.23.8
 
 require (
 	github.com/go-redis/redis v6.15.9+incompatible
