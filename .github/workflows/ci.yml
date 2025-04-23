@@ -52,7 +52,6 @@ jobs:
 
       - name: Build
         run: go build -o bin/app ./
-
   deploy:
     name: Deploy to Railway
     needs: build
@@ -65,13 +64,12 @@ jobs:
         run: |
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
-
-      - name: Vincular projeto Railway
-        run: railway link --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Deploy para Railway
-        run: railway up --service ingestor-magalu
+      - name: Link and Deploy
+        run: |
+          railway link --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
+          railway up --service ingestor-magalu
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
