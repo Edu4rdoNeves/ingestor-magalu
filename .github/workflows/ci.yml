@@ -60,16 +60,26 @@ jobs:
 
       - name: Build
         run: go build -o bin/app ./ 
+
   deploy:
     name: Deploy to Railway
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Deploy with Railway CLI
-        uses: railwayapp/railway-action@v1
+      - name: Install Node.js (required for Railway CLI)
+        uses: actions/setup-node@v3
         with:
-          railwayToken: ${{ secrets.RAILWAY_TOKEN }}
+          node-version: '18'
+
+      - name: Install Railway CLI
+        run: npm install -g railway
+
+      - name: Deploy to Railway
+        run: railway up --service ingestor-magalu
+        env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
