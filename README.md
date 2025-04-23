@@ -3,7 +3,7 @@
 ![Go](https://img.shields.io/badge/Go-1.23-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-# 🌀 Magalu Cloud - Pulse Ingestor
+# 🌀 Magalu Cloud - Ingestor
 
 Este projeto implementa o componente **Ingestor** do desafio técnico do Magalu Cloud. Ele é responsável por consumir mensagens de uso de produtos (pulses) via RabbitMQ, agregá-las temporariamente no Redis e posteriormente persistir os dados no PostgreSQL por meio de um cron worker.
 
