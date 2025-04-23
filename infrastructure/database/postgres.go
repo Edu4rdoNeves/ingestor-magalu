@@ -12,9 +12,6 @@ import (
 func ConnectPostgre(config DbConfig) (*gorm.DB, error) {
 	logrus.Info("Connecting to PostgreSQL database...")
 
-	logrus.Infof("DB Config: host=%s, user=%s, password=%s, dbname=%s, port=%d",
-		config.Host, config.User, config.Password, config.DbName, config.Port)
-
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d TimeZone=%s",
 		config.Host, config.User, config.Password, config.DbName, config.Port, "America%2FSao_Paulo")
 

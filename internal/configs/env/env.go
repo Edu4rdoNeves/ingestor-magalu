@@ -47,7 +47,8 @@ var (
 
 // OTHERS
 var (
-	Flag string
+	QntdProductSku int
+	QntdUseUnity   int
 )
 
 func LoadEnv() {
@@ -119,7 +120,15 @@ func LoadEnv() {
 	ScheduleSavePulse = os.Getenv("SCHEDULE_SAVE_PULSE")
 
 	//OTHERS
-	Flag = os.Getenv("FLAG")
+	QntdProductSku, err = utils.StringToInt(os.Getenv("QNTD_PRODUCT_SKU"))
+	if err != nil {
+		logrus.Error("Fail to convert QntdProductSku to int. Erro:", err)
+	}
+
+	QntdUseUnity, err = utils.StringToInt(os.Getenv("QNTD_USE_UNITY"))
+	if err != nil {
+		logrus.Error("Fail to convert QntdUseUnity to int. Erro:", err)
+	}
 
 	SimulatorTotalMessages, err = utils.StringToInt(os.Getenv("SIMULATOR_TOTAL_MESSAGES"))
 	if err != nil {

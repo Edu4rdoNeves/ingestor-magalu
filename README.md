@@ -203,6 +203,42 @@ flowchart TD
   - Alta manutenibilidade
   - Independência de frameworks e ferramentas
 
+## 🚀 Deploy da Aplicação
+
+- A aplicação foi implantada em produção utilizando a plataforma `Railway`, garantindo fácil escalabilidade, monitoramento e integração com os serviços externos (`RabbitMQ`, `Redis` e `PostgreSQL`).
+
+- 🌐 Acesso à Aplicação
+
+- 🔐 Link privado: apenas para avaliadores. Caso precise de acesso, entre em contato.
+
+### ⚙️ Infraestrutura no Railway
+
+- A infraestrutura foi provisionada com os seguintes serviços gerenciados pela Railway:
+
+  - 🐇 **RabbitMQ** - responsável pela fila de mensagens.
+  - 🧠 **Redis** - armazenamento temporário de dados agregados.
+  - 🐘 **PostgreSQL** - persistência final dos dados.
+  - 🔧 **Container Go** - aplicação principal (Ingestor) construída com Docker.
+
+### 🗺️ Arquitetura da Solução
+
+- A imagem abaixo resume a arquitetura geral do sistema:
+
+<p align="center"> <img src="https://i.imgur.com/4FCGTZr.png" alt="Arquitetura da Solução" width="700"/> </p>
+
+### 💡 Considerações sobre o deploy
+
+  - O deploy foi configurado com `CD` via `GitHub Actions` e não pelo arquivo `ci.yml`, e o `CI` com etapas de teste, build e build automatico para produção configurados no projeto dentro do arquivo `ci.yml`.
+
+  - O  `Redis` e o  `PostgreSQL ` utilizam volumes persistentes, garantindo integridade dos dados mesmo após reinicializações.
+
+- O `RabbitMQ` está com painel de administração habilitado:
+  
+  - link: https://rabbitmq-web-ui-production-d644.up.railway.app
+
+  - Para conseguir user e senha me solicitar.
+
+
 ## 📌 Considerações Finais
 
 - ✅ Aplicação resiliente com `retries` e `backoff` no Redis

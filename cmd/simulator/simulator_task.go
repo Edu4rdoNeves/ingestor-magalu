@@ -53,8 +53,8 @@ func (s *SimulatorTask) Run() {
 	for i := 0; i < totalMessages; i++ {
 		msg := dto.PulseData{
 			Tenant:     "magalu",
-			ProductSku: fmt.Sprintf("SKU-%d", i%150),
-			UseUnity:   fmt.Sprintf("loja-%d", i%10),
+			ProductSku: fmt.Sprintf("SKU-%d", i%env.QntdProductSku),
+			UseUnity:   fmt.Sprintf("loja-%d", i%env.QntdUseUnity),
 			UsedAmount: float64(i%10) + 1,
 		}
 		msgChan <- msg
