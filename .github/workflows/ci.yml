@@ -41,16 +41,13 @@ jobs:
     name: Build Binary
     needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.23'
-
       - name: Cache Go modules
         uses: actions/cache@v3
         with:
@@ -60,10 +57,8 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-
       - name: Build
-        run: go build -o bin/app ./cmd
-
+        run: go build -o bin/app .
   deploy:
     name: Deploy to Railway
     needs: build
