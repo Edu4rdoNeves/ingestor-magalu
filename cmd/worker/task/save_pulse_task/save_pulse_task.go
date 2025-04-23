@@ -84,7 +84,6 @@ func (t *SavePulseTask) process(ctx context.Context, id int, keysChan <-chan str
 			log.Info("Context canceled, flushing batch before exit...")
 			t.saveAndDelete(ctx, pulseBatch, keyMap, log)
 			pulseBatch = nil
-			keyMap = make(map[*dto.PulseData]string)
 			return
 
 		case key, ok := <-keysChan:
@@ -92,7 +91,6 @@ func (t *SavePulseTask) process(ctx context.Context, id int, keysChan <-chan str
 				log.Info("Channel closed, flushing remaining data...")
 				t.saveAndDelete(ctx, pulseBatch, keyMap, log)
 				pulseBatch = nil
-				keyMap = make(map[*dto.PulseData]string)
 
 				return
 			}
@@ -141,7 +139,6 @@ func (t *SavePulseTask) saveAndDelete(ctx context.Context, batch []*dto.PulseDat
 
 	logrus.Infof("Batch saved and deleted successfully. Total: %d", len(batch))
 	batch = nil
-	keyMap = make(map[*dto.PulseData]string)
 }
 
 func (t *SavePulseTask) buildPulseDataFromKey(key string) (*dto.PulseData, error) {

@@ -48,6 +48,19 @@ func TestPulseTask_Run(t *testing.T) {
 				expectRedisCall: true,
 			},
 			{
+				name: "❌ Deve logar erro se der falha ao consumir a mensagem no rabbitMq",
+				setMocks: func(mockRedis *redisMock.MockIRedisClient, mockRabbit *rabbitMock.MockIRabbitMQ, pulseBody []byte, wg *sync.WaitGroup) {
+					mockRabbit.EXPECT().
+						Consumer(gomock.Any()).
+						DoAndReturn(func(handler func([]byte)) error {
+							t.Logf("🚨 RabbitMq retornou erro simulado")
+							return errors.New("erro simulado ao consumir mensagens do RabbitMq")
+						})
+				},
+				expectErrLog:    true,
+				expectRedisCall: false,
+			},
+			{
 				name: "❌ Deve logar erro se Redis falhar",
 				setMocks: func(mockRedis *redisMock.MockIRedisClient, mockRabbit *rabbitMock.MockIRabbitMQ, pulseBody []byte, wg *sync.WaitGroup) {
 					mockRabbit.EXPECT().
@@ -85,11 +98,6 @@ func TestPulseTask_Run(t *testing.T) {
 							}()
 							return nil
 						})
-
-					// Redis não deve ser chamado
-					mockRedis.EXPECT().
-						IncrementCounter(gomock.Any(), gomock.Any()).
-						Times(0)
 				},
 				expectRedisCall: false,
 			},

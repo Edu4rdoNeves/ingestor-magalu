@@ -164,7 +164,7 @@ Esse comando irá iniciar:
 
 - **Ingestão**
 
-    - Mensagens JSON são consumidas do RabbitMQ por workers concorrentes.
+    - Mensagens são consumidas do RabbitMQ por workers concorrentes.
 
     - Cada mensagem é desserializada e agregada em Redis usando chave composta.
 
