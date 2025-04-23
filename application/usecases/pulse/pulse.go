@@ -14,10 +14,10 @@ type IPulseUseCase interface {
 }
 
 type PulseUseCase struct {
-	PulseRepo *pulseRepo.PulseRepository
+	PulseRepo pulseRepo.IPulseRepository
 }
 
-func NewPulseUseCase(pulseRepo *pulseRepo.PulseRepository) IPulseUseCase {
+func NewPulseUseCase(pulseRepo pulseRepo.IPulseRepository) IPulseUseCase {
 	return &PulseUseCase{PulseRepo: pulseRepo}
 }
 

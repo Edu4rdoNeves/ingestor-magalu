@@ -2,6 +2,7 @@ package pulse
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/domain/entity"
 	"gorm.io/gorm"
@@ -23,7 +24,11 @@ func NewPulseRepository(db *gorm.DB) *PulseRepository {
 }
 
 func (r *PulseRepository) SavePulseBatch(ctx context.Context, pulseEntities []*entity.PulseData) error {
-	return r.DB.WithContext(ctx).Clauses(clause.OnConflict{
+	if len(pulseEntities) == 0 {
+		return errors.New("no pulse reported")
+	}
+
+	return r.DB.Debug().WithContext(ctx).Clauses(clause.OnConflict{
 		Columns: []clause.Column{
 			{Name: "tenant"},
 			{Name: "product_sku"},

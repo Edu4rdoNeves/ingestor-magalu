@@ -112,8 +112,6 @@ func TestSavePulseTask_Run(t *testing.T) {
 				defer cancel()
 
 				task.Run(ctx)
-
-				// Aqui você pode validar logs ou usar hooks de logrus pra interceptar mensagens se necessário
 			})
 		}
 	})
