@@ -23,7 +23,13 @@ type TaskWithContext func(ctx context.Context)
 
 func (cm *CronManager) AddTask(title, schedule string, task TaskWithContext) {
 	_, err := cm.cron.AddFunc(schedule, func() {
-		task(cm.ctx)
+		select {
+		case <-cm.ctx.Done():
+			logrus.Warnf("task %s not executed: context canceled", title)
+			return
+		default:
+			task(cm.ctx)
+		}
 	})
 	if err != nil {
 		logrus.Errorf("Error adding cron job: %s", schedule)
