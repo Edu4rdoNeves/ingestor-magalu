@@ -81,8 +81,6 @@ func (t *SavePulseTask) process(ctx context.Context, id int, keysChan <-chan str
 	for {
 		select {
 		case <-ctx.Done():
-
-			//verificar do pq estou chamando o save
 			log.Info("Context canceled, flushing batch before exit...")
 			t.saveAndDelete(ctx, pulseBatch, keyMap, log)
 			pulseBatch = nil

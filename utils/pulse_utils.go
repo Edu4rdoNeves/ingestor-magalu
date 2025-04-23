@@ -9,8 +9,10 @@ import (
 
 func ParsePulseKey(key string, count float64) (*dto.PulseData, error) {
 	parts := strings.Split(key, ":")
-	if len(parts) != 4 {
-		return nil, fmt.Errorf("invalid key format: %s", key)
+	const expectedParts = 4
+
+	if len(parts) != expectedParts {
+		return nil, fmt.Errorf("invalid key format: expected %d parts, got %d - key: %s", expectedParts, len(parts), key)
 	}
 
 	return &dto.PulseData{
