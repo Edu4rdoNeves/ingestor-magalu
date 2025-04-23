@@ -2,24 +2,20 @@ name: CI Pipeline 🚀
 
 on:
   push:
-    branches: [main] 
+    branches: [main]
 
 jobs:
   test:
     name: Run Tests and Lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
+      - uses: actions/setup-go@v4
         with:
           go-version: '1.23'
 
-      - name: Cache Go modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -38,18 +34,14 @@ jobs:
     name: Build Binary
     needs: test
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
+      - uses: actions/setup-go@v4
         with:
           go-version: '1.23'
 
-      - name: Cache Go modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
@@ -59,23 +51,25 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Build
-        run: go build -o bin/app ./ 
+        run: go build -o bin/app ./
 
   deploy:
     name: Deploy to Railway
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Install Railway CLI
-        run: npm install -g @railway/cli
+        run: |
+          curl -fsSL https://railway.app/install.sh | sh
+          export PATH=$HOME/.railway/bin:$PATH
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
       - name: Deploy with Railway CLI
-        run: railway up --service ingestor-magalu
+        run: |
+          railway link d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
+          railway up --service ingestor-magalu
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
