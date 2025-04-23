@@ -14,10 +14,11 @@ Este projeto implementa o componente **Ingestor** do desafio técnico do Magalu 
 - [🧠 Visão Geral](#-visão-geral)
 - [⚙️ Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [📁 Estrutura do Projeto](#-estrutura-do-projeto)
-- [🚀 Executando o Projeto](#-executando-o-projeto)
+- [🔧 Executando o Projeto](#-executando-o-projeto)
 - [🧪 Executando os Testes](#-executando-os-testes)
 - [🔁 Fluxo do Sistema](#-fluxo-do-sistema)
 - [🧱 Arquitetura](#-arquitetura)
+- [🚀 Deploy da Aplicação](#-arquitetura-deploy)
 - [📌 Considerações Finais](#-considerações-finais)
 
 ---
