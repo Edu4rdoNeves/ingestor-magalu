@@ -69,9 +69,10 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deploy para Railway
-        run: railway up --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4 --service ingestor-magalu
+        run: railway up -- --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4 --service ingestor-magalu
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
 
       - name: Test Railway CLI Auth
         run: railway whoami
