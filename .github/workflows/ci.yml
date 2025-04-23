@@ -60,8 +60,7 @@ jobs:
 
       - name: Build
         run: go build -o bin/app ./ 
-
-    deploy:
+  deploy:
     name: Deploy to Railway
     needs: build
     runs-on: ubuntu-latest
