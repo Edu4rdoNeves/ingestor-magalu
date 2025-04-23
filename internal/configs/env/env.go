@@ -40,6 +40,13 @@ var (
 	ScheduleSavePulse string
 )
 
+// API
+var (
+	GinMode    string
+	CORSEnable bool
+	ServerPort string
+)
+
 // DATABASE
 var (
 	IngestorDb database.DbConfig
@@ -104,6 +111,10 @@ func LoadEnv() {
 	if err != nil {
 		logrus.Error("Fail to convert SavePulseBatch to int. Erro:", err)
 	}
+
+	//API
+	GinMode = os.Getenv("GIN_MODE")
+	ServerPort = os.Getenv("SERVER_PORT")
 
 	//DATABASE
 	IngestorDb.Host = os.Getenv("INGESTOR_HOST")

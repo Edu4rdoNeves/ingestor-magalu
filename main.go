@@ -4,6 +4,7 @@ import (
 	"flag"
 	"sync"
 
+	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/server"
 	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker"
 	"github.com/Edu4rdoNeves/ingestor-magalu/internal/dependency"
 	"github.com/Edu4rdoNeves/ingestor-magalu/utils"
@@ -12,7 +13,7 @@ import (
 
 func main() {
 
-	workerFlag, scriptFlag := utils.ConfigFlags()
+	workerFlag, scriptFlag, apiFlag := utils.ConfigFlags()
 
 	flag.Parse()
 	wg := new(sync.WaitGroup)
@@ -30,5 +31,10 @@ func main() {
 	if *scriptFlag {
 		dependency.SimulatorTask.Run()
 		logrus.Info("Finish script!")
+	}
+
+	if *apiFlag {
+		logrus.Info("Api Run!")
+		server.Run()
 	}
 }

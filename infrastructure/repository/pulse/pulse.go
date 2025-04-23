@@ -3,14 +3,17 @@ package pulse
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/domain/entity"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type IPulseRepository interface {
 	SavePulseBatch(ctx context.Context, pulses []*entity.PulseData) error
+	GetPulses(offset, limit int) ([]*entity.PulseData, error)
 }
 
 type PulseRepository struct {
@@ -39,4 +42,17 @@ func (r *PulseRepository) SavePulseBatch(ctx context.Context, pulseEntities []*e
 			"updated_at":  gorm.Expr("NOW()"),
 		}),
 	}).Create(&pulseEntities).Error
+}
+
+func (r *PulseRepository) GetPulses(offset, limit int) ([]*entity.PulseData, error) {
+	pulses := []*entity.PulseData{}
+
+	err := r.DB.Limit(limit).Offset(offset).Find(&pulses).Error
+	if err != nil {
+		logrus.Error("fail to get pulses")
+		return nil, fmt.Errorf("fail to get pulses. Error: %v", err)
+
+	}
+
+	return pulses, nil
 }
