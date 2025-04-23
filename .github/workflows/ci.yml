@@ -59,17 +59,22 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Install Railway CLI
         run: |
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
+        shell: bash
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Link and Deploy
-        run: |
-          railway link --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
-          railway up --service ingestor-magalu
+      - name: Deploy para Railway
+        run: railway up --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4 --service ingestor-magalu
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Test Railway CLI Auth
+        run: railway whoami
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
