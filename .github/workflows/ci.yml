@@ -64,12 +64,11 @@ jobs:
       - name: Install Railway CLI
         run: |
           curl -fsSL https://railway.app/install.sh | sh
-          export PATH=$HOME/.railway/bin:$PATH
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
-      - name: Deploy with Railway CLI
+      - name: Link and Deploy
         run: |
-          railway link d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
+          railway link --project d3fd52a5-4cf2-4f45-9387-bb4d81b07fc4
           railway up --service ingestor-magalu
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
