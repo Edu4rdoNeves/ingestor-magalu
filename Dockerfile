@@ -15,4 +15,4 @@ ENV ENV_APP_NAME=$APP_NAME
 COPY --from=build /go/bin/${APP_NAME} /
 
 ENTRYPOINT ["/ingestor"]
-CMD ["-worker"]
+CMD [""]
