@@ -5,7 +5,9 @@ import (
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/application/service/rabbitmq"
 	"github.com/Edu4rdoNeves/ingestor-magalu/application/service/redis"
+	loginUsecase "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/login"
 	pulseUsecase "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/pulse"
+	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/controller/login"
 	pulseController "github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/controller/pulse"
 	populatequeuetask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/task/populate_queue_task"
 	pulsetask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/task/pulse_task"
@@ -24,6 +26,7 @@ var (
 // API
 var (
 	PulseController pulseController.IPulseController
+	LoginController login.ILoginController
 )
 
 func LoadGeneral() {
@@ -77,9 +80,11 @@ func LoadGeneral() {
 
 	//USECASES
 	pulseUsecase := pulseUsecase.NewPulseUseCase(pulseRepository, populatequeue)
+	loginUseCase := loginUsecase.NewLoginUseCase()
 
 	//CONTROLLER
 	PulseController = pulseController.NewPulseController(pulseUsecase)
+	LoginController = login.NewLoginController(loginUseCase)
 
 	//TASK
 	PulseTask = pulsetask.NewPulseTask(redisClient, rabbitPulseInstance)

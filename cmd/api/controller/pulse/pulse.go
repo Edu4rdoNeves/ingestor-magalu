@@ -75,6 +75,6 @@ func (c *PulseController) PopulateQueueWithPulses(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusAccepted, gin.H{
-		"message": "Simulation started successfully",
+		"message": "Simulation finish with successfully",
 	})
 }

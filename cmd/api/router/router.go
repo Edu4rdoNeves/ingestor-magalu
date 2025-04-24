@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/auth"
 	"github.com/Edu4rdoNeves/ingestor-magalu/internal/dependency"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,13 @@ func configureCORS(router *gin.Engine) {
 func defineRoutes(router *gin.Engine) {
 	api := router.Group("/api/v1")
 	{
-		pulses := api.Group("/pulses")
+
+		login := api.Group("login", dependency.LoginController.Login)
+		{
+			login.POST("/", nil)
+		}
+
+		pulses := api.Group("/pulses", auth.Auth())
 		{
 			pulses.POST("/populate", dependency.PulseController.PopulateQueueWithPulses)
 			pulses.GET("/", dependency.PulseController.GetPulses)

@@ -42,7 +42,12 @@ var (
 
 // API
 var (
-	ServerPort string
+	ServerPort  string
+	AppUser     string
+	AppPassword string
+
+	JwtIssuer string
+	JwtSecret string
 )
 
 // DATABASE
@@ -112,6 +117,11 @@ func LoadEnv() {
 
 	//API
 	ServerPort = os.Getenv("SERVER_PORT")
+	AppUser = os.Getenv("APP_USER")
+	AppPassword = os.Getenv("APP_PASSWORD")
+
+	JwtSecret = os.Getenv("JWT_SECRET_KEY")
+	JwtIssuer = os.Getenv("JWT_ISSUER")
 
 	//DATABASE
 	IngestorDb.Host = os.Getenv("INGESTOR_HOST")

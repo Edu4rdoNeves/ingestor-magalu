@@ -116,7 +116,26 @@ Esse comando irá iniciar:
 - *`PostgreSQL`*
 - *`Aplicação Go (main.go)`*
 
-4. **Bater na rota para popular a fila**
+4. - **Bater na rota para pegar o token da api**
+
+- body de exemplo:
+
+```bash
+  {
+   "username":"fake",   #solicitar o username
+   "password":"fake"    #solicitar a senha
+}
+```
+
+- Segue a rota para login:
+
+  - Método **POST**:
+
+```bash
+    https://ingestor-magalu-production.up.railway.app/api/v1/login
+```
+
+5. **Bater na rota para popular a fila**
 
 - *Você pode configurar a taxa de envio, o número de workers e os dados diretamente na api para testar concorrência e resiliência*.
 
@@ -143,12 +162,12 @@ Esse comando irá iniciar:
 - Método **POST**:
 
 ```bash
-    api/v1/pulses/populate
+    https://ingestor-magalu-production.up.railway.app/api/v1/pulses/populate
 ```
 
 > ⚠️  **- Mais abaixo, na seção API, explico detalhadamente os demais endpoints disponíveis, além das configurações e funcionalidades da aplicação**.
 
-5. **Configurar para rodar o Worker  - execução do serviço**
+6. **Configurar para rodar o Worker  - execução do serviço**
 
 - Após a fila estar populada, deve rodar o seguinte comando para execução do serviço:
 
@@ -271,12 +290,28 @@ flowchart TD
 
 ### 🔍 Endpoints
 
+  - 🔐 **LOGIN**
+
+    - Primeiro passo é realizar o login na aplicação, a mesma retorna a seguinte estrutura:
+
+      ```bash
+      "Auth": {
+          "Token": "fake",
+          "ExpiresAt": 00
+      }
+      ```
+
+    - Utilizar o token como `Bearer Token` em `Authorization` para realizar a autenticação
+
   - **✅ Listar Pulses**
 
     - **GET** /api/v1/pulses
 
     - Consulta os dados agregados de pulses com paginação.
 
+    - Para acessar a rota é necessário incluir o token JWT no header Authorization no seguinte formato:
+
+      - Authorization: Bearer <seu_token_aqui>
 
     - **Query Params:**
 
@@ -287,28 +322,40 @@ flowchart TD
     - **Exemplo**:
 
       ```bash
-      GET /api/v1/pulses?page=2&limit=5
+      GET https://ingestor-magalu-production.up.railway.app//api/v1/pulses?page=2&limit=5
       ```
 
 - 🔎 Buscar Pulse por ID
 
-    - **GET** /api/v1/pulses/:id 
+    - **GET**:
 
       - Consulta os dados de um pulse específico pelo seu ID.
+
+      - Para acessar a rota é necessário incluir o token JWT no header Authorization no seguinte formato:
+
+        - Authorization: Bearer <seu_token_aqui>
 
   - **Exemplo**:
 
       ```bash
-        GET /api/v1/pulses/42
+    GET https://ingestor-magalu-production.up.railway.app/api/v1/pulses/42
       ```
 
 - 📬 Popular fila com pulsos fakes
 
-  - **POST** /api/v1/pulses/populate 
+  - **POST**:
 
-    - Popula a fila pulses com dados fakes para conseguir testar a aplicação.
+```bash
+    https://ingestor-magalu-production.up.railway.app//api/v1/pulses/populate 
+```
 
-  - **Exemplo**:
+  - Popula a fila pulses com dados fakes para conseguir testar a aplicação.
+
+  - Para acessar a rota é necessário incluir o token JWT no header Authorization no seguinte formato:
+
+    - Authorization: Bearer <seu_token_aqui>
+
+  - **Exemplo**:  
 
     - **BODY**:
     ```bash
@@ -318,7 +365,6 @@ flowchart TD
           "buffer_size":100
         }
       ```
-
 
 - Esses endpoints são acessíveis apenas para visualização dos dados no banco e para popular a fila, facilitando a validação do funcionamento da aplicação.
 
