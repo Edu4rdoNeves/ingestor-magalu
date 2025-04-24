@@ -232,13 +232,14 @@ flowchart TD
   - 🐇 **RabbitMQ** - responsável pela fila de mensagens.
   - 🧠 **Redis** - armazenamento temporário de dados agregados.
   - 🐘 **PostgreSQL** - persistência final dos dados.
-  - 🔧 **Container Go** - aplicação principal (Ingestor) construída com Docker.
+  - 🔧 **Container Go Worker** - aplicação principal worker (Ingestor) construída com Docker.
+  - 🧭 **Container Go API** - aplicação principal api (Ingestor) construída com Docker.
 
 ### 🗺️ Arquitetura da Solução
 
 - A imagem abaixo resume a arquitetura geral do sistema:
 
-<p align="center"> <img src="https://i.imgur.com/4FCGTZr.png" alt="Arquitetura da Solução" width="700"/> </p>
+<p align="center"> <img src="https://i.imgur.com/eVWtOkX.png" alt="Arquitetura da Solução" width="700"/> </p>
 
 ### 💡 Considerações sobre o deploy
 
@@ -252,10 +253,11 @@ flowchart TD
 
   - Para conseguir user e senha me solicitar.
 
-
 ## 🧭 API
 
 - Como bônus, foi implementada uma pequena `API REST` apenas para fins de visualização dos dados agregados do `Pulse`. Essa `API` não faz parte da proposta original do desafio, mas pode ajudar o avaliador a consultar os dados persistidos e popular a fila diretamente via Postman ou navegador.
+
+> ⚠️ Caso deseje acessar a rota pública (produção) do serviço hospedado, entre em contato e eu envio a URL.
 
 ### ⚙️ Como rodar a API
 
@@ -318,7 +320,7 @@ flowchart TD
       ```
 
 
-- Esses endpoints são acessíveis apenas para visualização dos dados no banco, facilitando a validação do funcionamento da aplicação.
+- Esses endpoints são acessíveis apenas para visualização dos dados no banco e para popular a fila, facilitando a validação do funcionamento da aplicação.
 
 
 
