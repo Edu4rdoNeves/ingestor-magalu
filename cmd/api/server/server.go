@@ -3,16 +3,16 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/router"
+	"github.com/Edu4rdoNeves/ingestor-magalu/internal/configs/env"
 	"github.com/gin-gonic/gin"
 )
 
 func Run() {
-	port := os.Getenv("SERVER_PORT")
+	port := env.ServerPort
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	server := gin.Default()

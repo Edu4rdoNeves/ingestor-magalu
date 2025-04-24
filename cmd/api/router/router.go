@@ -34,9 +34,9 @@ func defineRoutes(router *gin.Engine) {
 	{
 		pulses := api.Group("/pulses")
 		{
+			pulses.POST("/populate", dependency.PulseController.PopulateQueueWithPulses)
 			pulses.GET("/", dependency.PulseController.GetPulses)
 			pulses.GET("/:id", dependency.PulseController.GetPulseByID)
-			pulses.POST("/populate", dependency.PulseController.PopulateQueueWithPulses)
 		}
 
 	}

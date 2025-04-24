@@ -4,8 +4,8 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"     # Porta de conexão das apps
-      - "15672:15672"   # Porta do dashboard (RabbitMQ UI)
+      - "5672:5672"     
+      - "15672:15672"   
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -68,7 +68,7 @@ services:
       - SCHEDULE_SAVE_PULSE=*/1 * * * *
 
     ports:
-      - "8080:8080" # Se sua app tiver uma porta HTTP/API, ajuste conforme necessário
+      - "8080:8080"
 
 volumes:
   postgres_data:
