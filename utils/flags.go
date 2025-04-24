@@ -6,9 +6,20 @@ import (
 	"github.com/Edu4rdoNeves/ingestor-magalu/internal/constants"
 )
 
-func ConfigFlags() (*bool, *bool) {
-	workerFlag := flag.Bool(constants.Worker, false, constants.RunWorker)
-	scriptFlag := flag.Bool(constants.Script, false, constants.RunScript)
+type Flags struct {
+	RunWorker bool
+	RunScript bool
+	RunAPI    bool
+}
 
-	return workerFlag, scriptFlag
+func ConfigFlags() *Flags {
+	var flags Flags
+
+	flag.BoolVar(&flags.RunWorker, constants.Worker, false, constants.RunWorker)
+	flag.BoolVar(&flags.RunScript, constants.Script, false, constants.RunScript)
+	flag.BoolVar(&flags.RunAPI, constants.Api, false, constants.RunApi)
+
+	flag.Parse()
+
+	return &flags
 }

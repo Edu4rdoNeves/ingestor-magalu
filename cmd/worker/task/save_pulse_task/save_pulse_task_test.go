@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	redisMock "github.com/Edu4rdoNeves/ingestor-magalu/application/service/redis/mocks"
-	usecaseMock "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/pulse/mocks"
+	usecaseMock "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/mocks"
 	savePulsetask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/task/save_pulse_task"
 	"github.com/Edu4rdoNeves/ingestor-magalu/internal/configs/env"
 	"github.com/golang/mock/gomock"

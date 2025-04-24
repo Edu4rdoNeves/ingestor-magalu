@@ -1,4 +1,4 @@
-package simulator
+package populatequeuetask
 
 import (
 	"encoding/json"
@@ -11,33 +11,27 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ISimulatorTask interface {
-	Run()
+type IPopulateQueueTask interface {
+	Run(populateQueueParams *dto.PopulateQueueParams)
 }
 
-type SimulatorTask struct {
+type PopulateQueueTask struct {
 	RabbitMq rabbitmq.IRabbitMQ
 }
 
-func NewSimulatorTask(rabbitmq rabbitmq.IRabbitMQ) ISimulatorTask {
-	return &SimulatorTask{
+func NewPopulateQueueTask(rabbitmq rabbitmq.IRabbitMQ) IPopulateQueueTask {
+	return &PopulateQueueTask{
 		RabbitMq: rabbitmq,
 	}
 }
 
-func (s *SimulatorTask) Run() {
+func (p *PopulateQueueTask) Run(populateQueueParams *dto.PopulateQueueParams) {
 	logrus.Info("Pulse Task - Started")
 
-	var (
-		totalMessages = env.SimulatorTotalMessages
-		numWorkers    = env.SimulatorWorkersNumber
-		bufferSize    = env.SimulatorBufferSize
-	)
-
 	var wg sync.WaitGroup
-	msgChan := make(chan dto.PulseData, bufferSize)
+	msgChan := make(chan dto.PulseData, populateQueueParams.BufferSize)
 
-	for i := 1; i <= numWorkers; i++ {
+	for i := 1; i <= populateQueueParams.WorkersNumber; i++ {
 		wg.Add(1)
 		go func(workerID int) {
 			defer func() {
@@ -46,11 +40,11 @@ func (s *SimulatorTask) Run() {
 				}
 				wg.Done()
 			}()
-			s.publishMessages(workerID, msgChan)
+			p.publishMessages(workerID, msgChan)
 		}(i)
 	}
 
-	for i := 0; i < totalMessages; i++ {
+	for i := 0; i < populateQueueParams.TotalMessages; i++ {
 		msg := dto.PulseData{
 			Tenant:     "magalu",
 			ProductSku: fmt.Sprintf("SKU-%d", i%env.QntdProductSku),
@@ -65,7 +59,7 @@ func (s *SimulatorTask) Run() {
 	logrus.Info("✅ All messages have been published.")
 }
 
-func (s *SimulatorTask) publishMessages(workerID int, messages <-chan dto.PulseData) {
+func (p *PopulateQueueTask) publishMessages(workerID int, messages <-chan dto.PulseData) {
 	for msg := range messages {
 		body, err := json.Marshal(msg)
 		if err != nil {
@@ -73,7 +67,7 @@ func (s *SimulatorTask) publishMessages(workerID int, messages <-chan dto.PulseD
 			continue
 		}
 
-		err = s.RabbitMq.PublishWithNewChannel(body)
+		err = p.RabbitMq.PublishWithNewChannel(body)
 		if err != nil {
 			logrus.Errorf("[Worker %d] ❌ Failed to publish message: %v", workerID, err)
 		} else {
