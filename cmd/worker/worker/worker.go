@@ -3,7 +3,6 @@ package worker
 import (
 	"context"
 	"sync"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -31,27 +30,16 @@ func (wm *WorkerManager) AddTask(task TaskFunc) {
 	wm.Tasks = append(wm.Tasks, task)
 }
 
-func (wm *WorkerManager) Start(interval time.Duration) {
+func (wm *WorkerManager) Start() {
 	logrus.Info("Starting Worker Manager...")
 
-	wm.WaitGroup.Add(1)
-	defer wm.WaitGroup.Done()
+	for _, task := range wm.Tasks {
+		wm.WaitGroup.Add(1)
 
-	go func() {
-		ticker := time.NewTicker(interval)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-wm.Context.Done():
-				logrus.Info("Worker Manager Stopped.")
-				return
-			case <-ticker.C:
-				for _, task := range wm.Tasks {
-					logrus.Info("Executing Task...")
-					task(wm.Context)
-				}
-			}
-		}
-	}()
+		go func(t func(ctx context.Context)) {
+			defer wm.WaitGroup.Done()
+			logrus.Info("Starting Task...")
+			t(wm.Context)
+		}(task)
+	}
 }

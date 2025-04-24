@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ParsePulseKey(key string, count float64) (*dto.PulseData, error) {
+func ParsePulseKey(key string, amount float64) (*dto.PulseData, error) {
 	parts := strings.Split(key, ":")
 	const expectedParts = 4
 
@@ -21,7 +21,7 @@ func ParsePulseKey(key string, count float64) (*dto.PulseData, error) {
 		Tenant:     parts[1],
 		ProductSku: parts[2],
 		UseUnity:   parts[3],
-		UsedAmount: count,
+		UsedAmount: amount,
 	}, nil
 }
 

@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/signal"
 	"sync"
-	"time"
 
 	cronworker "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/cron_worker"
 	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/worker"
@@ -25,8 +24,6 @@ func Run() {
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
 
-	dependency.LoadWorkerDependencies()
-
 	cronManager := cronworker.NewCronManager(ctx)
 	cronManager.AddTask(constants.ScheduleSavePulseTask, env.ScheduleSavePulse, dependency.SavePulseTask.Run)
 
@@ -34,7 +31,7 @@ func Run() {
 	workerManager.AddTask(dependency.PulseTask.Run)
 
 	cronManager.Start()
-	workerManager.Start(5 * time.Second)
+	workerManager.Start()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)

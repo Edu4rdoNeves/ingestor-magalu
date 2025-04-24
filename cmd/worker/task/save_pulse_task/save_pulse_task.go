@@ -32,18 +32,14 @@ func NewSavePulseTask(redis redis.IRedisClient, pulseUC pulseUsecase.IPulseUseCa
 func (t *SavePulseTask) Run(ctx context.Context) {
 	logrus.Info("Save Pulse Task - Started")
 
-	numWorkers := env.SavePulseWorkersNumber
-	batchSize := env.SavePulseBatch
-	messageBuffer := env.SavePulseMessageBuffer
-
 	var wg sync.WaitGroup
-	keysChan := make(chan string, messageBuffer)
+	keysChan := make(chan string, env.SavePulseMessageBuffer)
 
-	for i := 1; i <= numWorkers; i++ {
+	for i := 1; i <= env.SavePulseWorkersNumber; i++ {
 		wg.Add(1)
 		go func(workerID int) {
 			defer wg.Done()
-			t.process(ctx, workerID, keysChan, batchSize)
+			t.process(ctx, workerID, keysChan, env.SavePulseBatch)
 		}(i)
 	}
 

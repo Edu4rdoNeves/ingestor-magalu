@@ -101,8 +101,7 @@ func (t *PulseTask) process(ctx context.Context, id int, messages <-chan []byte)
 			})
 			if err != nil {
 				logger.WithFields(logrus.Fields{
-					"worker_id": id,
-					"key":       key,
+					"key": key,
 				}).Errorf("Failed to update Redis after retries: %v", err)
 				continue
 			}

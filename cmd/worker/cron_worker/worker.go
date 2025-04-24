@@ -33,9 +33,9 @@ func (cm *CronManager) AddTask(title, schedule string, task TaskWithContext) {
 	})
 	if err != nil {
 		logrus.Errorf("Error adding cron job: %s", schedule)
-	} else {
-		logrus.Infof("task %s scheduled for: %s", title, schedule)
 	}
+
+	logrus.Infof("task %s scheduled for: %s", title, schedule)
 }
 
 func (cm *CronManager) Start() {
