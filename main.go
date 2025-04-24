@@ -13,13 +13,13 @@ import (
 
 func main() {
 
-	workerFlag, scriptFlag, apiFlag := utils.ConfigFlags()
+	flags := utils.ConfigFlags()
 
 	flag.Parse()
 	wg := new(sync.WaitGroup)
 	dependency.Load()
 
-	if *workerFlag {
+	if flags.RunWorker {
 		wg.Add(1)
 		go func() {
 			worker.Run()
@@ -28,12 +28,7 @@ func main() {
 		wg.Wait()
 	}
 
-	if *scriptFlag {
-		dependency.SimulatorTask.Run()
-		logrus.Info("Finish script!")
-	}
-
-	if *apiFlag {
+	if flags.RunAPI {
 		logrus.Info("Api Run!")
 		server.Run()
 	}

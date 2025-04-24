@@ -19,6 +19,7 @@ Este projeto implementa o componente **Ingestor** do desafio técnico do Magalu 
 - [🔁 Fluxo do Sistema](#-fluxo-do-sistema)
 - [🧱 Arquitetura](#-arquitetura)
 - [🚀 Deploy da Aplicação](#-arquitetura-deploy)
+- [🧭 API](#-api)
 - [📌 Considerações Finais](#-considerações-finais)
 
 ---
@@ -50,8 +51,7 @@ Este serviço é composto por dois principais workers:
 .
 ├── cmd/                   # Ponto de entrada da aplicação
 │   ├── worker/            # Configurações dos workers (worker e cron worker)
-│   ├── simulator/         # Configurações do simulator (Popula a fila com dados fakes e simula alto volume de dados)
-│   ├── api/               # Configurações da api
+│   ├── api/               # Configurações da api (Popula a fila com dados fakes e simula alto volume de dados e consulta os dados no banco)
 ├── application/           # Contém a lógica de aplicação
 │   ├── usecase/           # Casos de uso da aplicação, focados em operações específicas do domínio.
 │   ├── service/           # Serviços que encapsulam integrações externas.
@@ -116,26 +116,39 @@ Esse comando irá iniciar:
 - *`PostgreSQL`*
 - *`Aplicação Go (main.go)`*
 
-4. **Configurar e rodar o Script para popular a fila**
+4. **Bater na rota para popular a fila**
 
-- *Você pode configurar a taxa de envio, o número de workers e os dados diretamente no script para testar concorrência e resiliência*.
-- Altere as seguintes variaveis de ambiente para:
+- *Você pode configurar a taxa de envio, o número de workers e os dados diretamente na api para testar concorrência e resiliência*.
+
+- body de exemplo:
 
 ```bash
-    SIMULATOR_TOTAL_MESSAGES=1000     #define o número de mensagens simuladas que vamos enviar para a fila 
-    SIMULATOR_WORKERS_NUMBER=10       #/define o número de workers que vão realizar o processo de envio de mensagens
-    SIMULATOR_BUFFER_SIZE=100         #define o tamanho do buffer para o envio das mensagens
+  {
+   "total_messages":100000,
+   "workers_number":10,
+   "buffer_size":100
+  }
 ```
 
-- Rode o seguinte comando para começar a popular a fila com os dados fake:
+- Rode o seguinte comando para começar a rodar a api:
 
-  `Make run-script`
+  `Make run-api`
 
   ou se preferir:
 
-  `go run main.go -script`
+  `go run main.go -api`
 
-5. **Configurar e rodar o Worker para execução do serviço**
+- Bater na seguinte rota:
+
+- Método **POST**:
+
+```bash
+    api/v1/pulses/populate
+```
+
+> ⚠️  **- Mais abaixo, na seção API, explico detalhadamente os demais endpoints disponíveis, além das configurações e funcionalidades da aplicação**.
+
+5. **Configurar para rodar o Worker  - execução do serviço**
 
 - Após a fila estar populada, deve rodar o seguinte comando para execução do serviço:
 
@@ -238,6 +251,75 @@ flowchart TD
   - link: https://rabbitmq-web-ui-production-d644.up.railway.app
 
   - Para conseguir user e senha me solicitar.
+
+
+## 🧭 API
+
+- Como bônus, foi implementada uma pequena `API REST` apenas para fins de visualização dos dados agregados do `Pulse`. Essa `API` não faz parte da proposta original do desafio, mas pode ajudar o avaliador a consultar os dados persistidos e popular a fila diretamente via Postman ou navegador.
+
+### ⚙️ Como rodar a API
+
+  - Adicione os seguinte comando no terminal: 
+
+  `Make run-api`
+
+  ou se preferir:
+
+  `go run main.go -api`
+
+### 🔍 Endpoints
+
+  - **✅ Listar Pulses**
+
+    - **GET** /api/v1/pulses
+
+    - Consulta os dados agregados de pulses com paginação.
+
+
+    - **Query Params:**
+
+      - `page`: número da página (padrão: 1)
+
+      - `limit`: número de itens por página (padrão: 10)
+
+    - **Exemplo**:
+
+      ```bash
+      GET /api/v1/pulses?page=2&limit=5
+      ```
+
+- 🔎 Buscar Pulse por ID
+
+    - **GET** /api/v1/pulses/:id 
+
+      - Consulta os dados de um pulse específico pelo seu ID.
+
+  - **Exemplo**:
+
+      ```bash
+        GET /api/v1/pulses/42
+      ```
+
+- 📬 Popular fila com pulsos fakes
+
+  - **POST** /api/v1/pulses/populate 
+
+    - Popula a fila pulses com dados fakes para conseguir testar a aplicação.
+
+  - **Exemplo**:
+
+    - **BODY**:
+    ```bash
+        {
+          "total_messages":100000,
+          "workers_number":10,
+          "buffer_size":100
+        }
+      ```
+
+
+- Esses endpoints são acessíveis apenas para visualização dos dados no banco, facilitando a validação do funcionamento da aplicação.
+
 
 
 ## 📌 Considerações Finais

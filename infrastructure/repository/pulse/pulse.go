@@ -14,6 +14,7 @@ import (
 type IPulseRepository interface {
 	SavePulseBatch(ctx context.Context, pulses []*entity.PulseData) error
 	GetPulses(offset, limit int) ([]*entity.PulseData, error)
+	GetPulseByID(pulseID int) (*entity.PulseData, error)
 }
 
 type PulseRepository struct {
@@ -47,12 +48,33 @@ func (r *PulseRepository) SavePulseBatch(ctx context.Context, pulseEntities []*e
 func (r *PulseRepository) GetPulses(offset, limit int) ([]*entity.PulseData, error) {
 	pulses := []*entity.PulseData{}
 
+	if r.DB == nil {
+		logrus.Error("DB connection is null!")
+		return nil, fmt.Errorf("DB connection is null")
+	}
+
 	err := r.DB.Limit(limit).Offset(offset).Find(&pulses).Error
 	if err != nil {
-		logrus.Error("fail to get pulses")
+		logrus.Errorf("fail to get pulses. Error: %v", err)
 		return nil, fmt.Errorf("fail to get pulses. Error: %v", err)
-
 	}
 
 	return pulses, nil
+}
+
+func (r *PulseRepository) GetPulseByID(pulseID int) (*entity.PulseData, error) {
+	pulse := &entity.PulseData{}
+
+	if r.DB == nil {
+		logrus.Error("DB connection is null!")
+		return nil, fmt.Errorf("DB connection is null")
+	}
+
+	err := r.DB.Where("id = ?", pulseID).First(pulse).Error
+	if err != nil {
+		return nil, fmt.Errorf("fail to get pulse by id. Error: %v", err)
+
+	}
+
+	return pulse, nil
 }

@@ -42,8 +42,6 @@ var (
 
 // API
 var (
-	GinMode    string
-	CORSEnable bool
 	ServerPort string
 )
 
@@ -113,7 +111,6 @@ func LoadEnv() {
 	}
 
 	//API
-	GinMode = os.Getenv("GIN_MODE")
 	ServerPort = os.Getenv("SERVER_PORT")
 
 	//DATABASE

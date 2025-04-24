@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/Edu4rdoNeves/ingestor-magalu/domain/dto"
+	"github.com/Edu4rdoNeves/ingestor-magalu/internal/constants"
+	"github.com/sirupsen/logrus"
 )
 
 func ParsePulseKey(key string, count float64) (*dto.PulseData, error) {
@@ -21,4 +23,23 @@ func ParsePulseKey(key string, count float64) (*dto.PulseData, error) {
 		UseUnity:   parts[3],
 		UsedAmount: count,
 	}, nil
+}
+
+func ValidateAndSetDefaults(populateQueue *dto.PopulateQueueParams) error {
+	if populateQueue.TotalMessages <= 0 {
+		logrus.Warn("TotalMessages não especificado ou inválido. Usando valor padrão.")
+		populateQueue.TotalMessages = constants.DefaultTotalMessages
+	}
+
+	if populateQueue.WorkersNumber <= 0 {
+		logrus.Warn("WorkersNumber não especificado ou inválido. Usando valor padrão.")
+		populateQueue.WorkersNumber = constants.DefaultWorkersNumber
+	}
+
+	if populateQueue.BufferSize <= 0 {
+		logrus.Warn("BufferSize não especificado ou inválido. Usando valor padrão.")
+		populateQueue.BufferSize = constants.DefaultBufferSize
+	}
+
+	return nil
 }

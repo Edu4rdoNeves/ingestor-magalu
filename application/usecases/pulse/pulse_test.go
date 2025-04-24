@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	pulseUsecase "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/pulse"
+	mockpopulate "github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/task/populate_queue_task/mocks"
 	"github.com/Edu4rdoNeves/ingestor-magalu/domain/dto"
-	mockpulseRepo "github.com/Edu4rdoNeves/ingestor-magalu/infrastructure/repository/pulse/mocks"
+	mockpulseRepo "github.com/Edu4rdoNeves/ingestor-magalu/infrastructure/repository/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -54,12 +55,13 @@ func TestUseCase_SavePulseBatch(t *testing.T) {
 				defer ctrl.Finish()
 
 				mockRepo := mockpulseRepo.NewMockIPulseRepository(ctrl)
+				mockPopulate := mockpopulate.NewMockIPopulateQueueTask(ctrl)
 
 				if tt.mockSetup != nil {
 					tt.mockSetup(mockRepo)
 				}
 
-				usecase := pulseUsecase.NewPulseUseCase(mockRepo)
+				usecase := pulseUsecase.NewPulseUseCase(mockRepo, mockPopulate)
 
 				err := usecase.SavePulseBatch(context.Background(), tt.input)
 

@@ -6,7 +6,8 @@ import (
 	"github.com/Edu4rdoNeves/ingestor-magalu/application/service/rabbitmq"
 	"github.com/Edu4rdoNeves/ingestor-magalu/application/service/redis"
 	pulseUsecase "github.com/Edu4rdoNeves/ingestor-magalu/application/usecases/pulse"
-	simulatorTask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/simulator"
+	pulseController "github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/controller/pulse"
+	populatequeuetask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/api/task/populate_queue_task"
 	pulsetask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/task/pulse_task"
 	savePulseTask "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/task/save_pulse_task"
 	pulseRepo "github.com/Edu4rdoNeves/ingestor-magalu/infrastructure/repository/pulse"
@@ -14,10 +15,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// TASK
 var (
 	PulseTask     pulsetask.IPulseTask
 	SavePulseTask savePulseTask.ISavePulseTask
-	SimulatorTask simulatorTask.ISimulatorTask
+)
+
+// API
+var (
+	PulseController pulseController.IPulseController
 )
 
 func LoadGeneral() {
@@ -64,11 +70,16 @@ func LoadGeneral() {
 		WriteTimeout: 5 * time.Second,
 	})
 
+	populatequeue := populatequeuetask.NewPopulateQueueTask(rabbitPulseInstance)
+
 	//REPOSITORY
 	pulseRepository := pulseRepo.NewPulseRepository(IngestorDb)
 
 	//USECASES
-	pulseUsecase := pulseUsecase.NewPulseUseCase(pulseRepository)
+	pulseUsecase := pulseUsecase.NewPulseUseCase(pulseRepository, populatequeue)
+
+	//CONTROLLER
+	PulseController = pulseController.NewPulseController(pulseUsecase)
 
 	//TASK
 	PulseTask = pulsetask.NewPulseTask(redisClient, rabbitPulseInstance)
@@ -82,10 +93,4 @@ func LoadGeneral() {
 		logrus.Panic("Save Pulse Task is nil!")
 	}
 	logrus.Infof("Save Pulse Task initialized")
-
-	SimulatorTask = simulatorTask.NewSimulatorTask(rabbitPulseInstance)
-	if SimulatorTask == nil {
-		logrus.Panic("Simulator Task is nil!")
-	}
-	logrus.Infof("Simulator Task initialized")
 }
