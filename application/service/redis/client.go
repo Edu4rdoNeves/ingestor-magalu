@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"context"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -13,8 +12,6 @@ type IRedisClient interface {
 	DeleteKey(key string) error
 	GetKeysByPattern(pattern string) ([]string, error)
 }
-
-var ctx = context.Background()
 
 type RedisClient struct {
 	Client *redis.Client

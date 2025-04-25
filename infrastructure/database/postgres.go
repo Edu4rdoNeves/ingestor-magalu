@@ -16,7 +16,7 @@ func ConnectPostgre(config DbConfig) (*gorm.DB, error) {
 		config.Host, config.User, config.Password, config.DbName, config.Port, "America%2FSao_Paulo")
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // loga as queries SQL
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		return nil, err
