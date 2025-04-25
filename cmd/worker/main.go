@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	"syscall"
 
 	cronworker "github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/cron_worker"
 	"github.com/Edu4rdoNeves/ingestor-magalu/cmd/worker/worker"
@@ -34,7 +35,7 @@ func Run() {
 	workerManager.Start()
 
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, os.Interrupt)
+	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
 
 	<-sigs
 	logrus.Info("shutdown signal received, waiting for workers to complete...")
